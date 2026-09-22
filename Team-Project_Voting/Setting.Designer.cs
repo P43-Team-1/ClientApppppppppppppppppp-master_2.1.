@@ -91,6 +91,7 @@
             Controls.Add(button1);
             Name = "Setting";
             Text = "Setting";
+            Load += Setting_Load;
             ResumeLayout(false);
             PerformLayout();
         }

@@ -70,7 +70,33 @@ namespace Team_Project_Voting
             else
                 MessageBox.Show($"Register failed: {parts[1]}");
         }
-            
+        private async Task CreateVote(string title, string choices, string endTime)
+        {
+            serverEndPoint = await FindServer();
+            if (serverEndPoint == null)
+            {
+                MessageBox.Show("Server not found");
+                return;
+            }
+
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            await socket.ConnectAsync(serverEndPoint);
+
+            string request = $"create_vote;\"{title}\";{choices};{endTime}";
+            byte[] buffer = Encoding.UTF8.GetBytes(request);
+            await socket.SendAsync(buffer);
+
+            buffer = new byte[1024];
+            int len = await socket.ReceiveAsync(buffer);
+            string response = Encoding.UTF8.GetString(buffer, 0, len);
+            string[] parts = response.Split(';');
+            socket.Close();
+
+            if (parts[0] == "create_vote_success")
+                MessageBox.Show("Vote created success");
+            else
+                MessageBox.Show($"Vote creation failed: {parts[1]}");
+        }
 
         private async Task<IPEndPoint> FindServer()
         {

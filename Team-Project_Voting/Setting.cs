@@ -14,5 +14,10 @@ namespace Team_Project_Voting
         {
             InitializeComponent();
         }
+
+        private void Setting_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
