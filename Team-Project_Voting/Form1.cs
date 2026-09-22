@@ -15,7 +15,8 @@ namespace Team_Project_Voting
         }
         private void Setting_Click(object sender, EventArgs e)
         {
-            
+            using var Settings = new Setting();
+            Settings.ShowDialog();
         }
 
         private void VoteItems()

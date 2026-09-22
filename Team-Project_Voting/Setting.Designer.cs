@@ -33,6 +33,8 @@
             button3 = new Button();
             textBox1 = new TextBox();
             textBox2 = new TextBox();
+            dateTimePicker1 = new DateTimePicker();
+            label1 = new Label();
             SuspendLayout();
             // 
             // button1
@@ -43,6 +45,7 @@
             button1.TabIndex = 4;
             button1.Text = "Скасувати голосування";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // button2
             // 
@@ -64,26 +67,46 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(89, 70);
+            textBox1.Location = new Point(44, 70);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(155, 23);
+            textBox1.Size = new Size(294, 23);
             textBox1.TabIndex = 7;
             textBox1.Text = "Назва голосування";
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(89, 162);
+            textBox2.Location = new Point(44, 162);
             textBox2.Multiline = true;
             textBox2.Name = "textBox2";
-            textBox2.Size = new Size(155, 72);
+            textBox2.Size = new Size(294, 138);
             textBox2.TabIndex = 8;
-            textBox2.Text = "Варіанти відповіді";
+            textBox2.Text = "Варіанти відповіді(Кожна відповідь з нового рядка)";
+            // 
+            // dateTimePicker1
+            // 
+            dateTimePicker1.CustomFormat = " dd MMMM yyyy р. HH:mm";
+            dateTimePicker1.Format = DateTimePickerFormat.Custom;
+            dateTimePicker1.Location = new Point(44, 361);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new Size(294, 23);
+            dateTimePicker1.TabIndex = 9;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(44, 343);
+            label1.Name = "label1";
+            label1.Size = new Size(90, 15);
+            label1.TabIndex = 10;
+            label1.Text = "Час закінчення";
             // 
             // Setting
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(label1);
+            Controls.Add(dateTimePicker1);
             Controls.Add(textBox2);
             Controls.Add(textBox1);
             Controls.Add(button3);
@@ -102,5 +125,7 @@
         private Button button3;
         private TextBox textBox1;
         private TextBox textBox2;
+        private DateTimePicker dateTimePicker1;
+        private Label label1;
     }
 }
