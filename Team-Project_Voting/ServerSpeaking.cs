@@ -70,7 +70,7 @@ namespace Team_Project_Voting
             else
                 MessageBox.Show($"Register failed: {parts[1]}");
         }
-        private async Task CreateVote(string title, string choices, string endTime)
+        public async Task CreateVote(string title, string choices, string endTime)
         {
             serverEndPoint = await FindServer();
             if (serverEndPoint == null)
@@ -79,10 +79,16 @@ namespace Team_Project_Voting
                 return;
             }
 
+            if (title.Contains(';') || choices.Contains(';'))
+            {
+                MessageBox.Show("Текст не може містити символ ';'");
+                return;
+            }
+
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             await socket.ConnectAsync(serverEndPoint);
 
-            string request = $"create_vote;\"{title}\";{choices};{endTime}";
+            string request = $"create_vote;{title};{choices};{endTime}";
             byte[] buffer = Encoding.UTF8.GetBytes(request);
             await socket.SendAsync(buffer);
 
