@@ -104,18 +104,58 @@ namespace Team_Project_Voting
                 MessageBox.Show($"Vote creation failed: {parts[1]}");
         }
 
+        public async Task<List<(int Id, string Title, int TotalVotes)>> GetVotes()
+        {
+            serverEndPoint = await FindServer();
+            if (serverEndPoint == null)
+            {
+                MessageBox.Show("Server not found");
+                return null;
+            }
+
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            await socket.ConnectAsync(serverEndPoint);
+
+            byte[] request = Encoding.UTF8.GetBytes("get_votes;");
+            await socket.SendAsync(request);
+
+            byte[] buffer = new byte[4096];
+            int len = await socket.ReceiveAsync(buffer);
+            string response = Encoding.UTF8.GetString(buffer, 0, len);
+            socket.Close();
+
+            var result = new List<(int, string, int)>();
+
+            string[] parts = response.Split(';');
+            if (parts[0] != "votes_list" || parts.Length < 2 || string.IsNullOrEmpty(parts[1]))
+                return result;
+
+            foreach (string entry in parts[1].Split('|'))
+            {
+                string[] fields = entry.Split(',');
+                if (fields.Length == 3 && int.TryParse(fields[0], out int id) && int.TryParse(fields[2], out int totalVotes))
+                {
+                    result.Add((id, fields[1], totalVotes));
+                }
+            }
+
+            return result;
+        }
+
         private async Task<IPEndPoint> FindServer()
         {
            using(var client = new UdpClient())
             {
+                client.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
                 client.EnableBroadcast = true;
                 byte[] requesData = Encoding.UTF8.GetBytes("discover_server");
-                await client.SendAsync(requesData, requesData.Length, new IPEndPoint(IPAddress.Broadcast, discover_port));
+                try { await client.SendAsync(requesData, requesData.Length, new IPEndPoint(IPAddress.Broadcast, discover_port)); } catch { }
 
-                await client.SendAsync(requesData, requesData.Length, new IPEndPoint(IPAddress.Parse("26.255.255.255"), discover_port));
+
+                try { await client.SendAsync(requesData, requesData.Length, new IPEndPoint(IPAddress.Parse("26.255.255.255"), discover_port)); } catch { }
 
                 var receive = client.ReceiveAsync();
-                var timeout = Task.Delay(200);
+                var timeout = Task.Delay(2000);
 
                 var completed = await Task.WhenAny(receive, timeout);
                 if(completed == receive)

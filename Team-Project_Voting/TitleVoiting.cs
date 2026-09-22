@@ -20,6 +20,7 @@ namespace Team_Project_Voting
         private string _title;
         private string _voted;
         private Image _background;
+        private int _voteId;
 
         private void btnVoting_Click(object sender, EventArgs e)
         {
@@ -57,6 +58,14 @@ namespace Team_Project_Voting
         {
             get { return _background; }
             set { _background = value; lblBackground.Image = value; }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Category("Voting")]
+        public int VoteId
+        {
+            get { return _voteId; }
+            set { _voteId = value; }
         }
         #endregion
 

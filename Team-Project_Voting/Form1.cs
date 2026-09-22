@@ -7,29 +7,41 @@ namespace Team_Project_Voting
     public partial class Form1 : Form
     {
         private string login;
+        private ServerSpeaking server;
         public Form1()
         {
             InitializeComponent();
             label1.Text = "I am a label";
+            server = new ServerSpeaking();
             Shown += Form1_Shown;
         }
         private void Setting_Click(object sender, EventArgs e)
         {
-            using var Settings = new Setting();
+            using var Settings = new Setting();       
             Settings.ShowDialog();
         }
 
-        private void VoteItems()
+        private async void VoteItems()
         {
+            var votes = await server.GetVotes();
 
-            TitleVoiting[] votingItems = new TitleVoiting[7];
-            for (int i = 0; i < votingItems.Length; i++)
+            if (votes == null)
             {
-                votingItems[i] = new TitleVoiting();
-                votingItems[i].Background = PictrureMatrix(Properties.Resources.Знімок_екрана_2026_02_18_172853, 0.8f); ;
-                votingItems[i].title = "Voting Item " + (i + 1);
-                votingItems[i].Voted = "0 votes";
-                flowLayoutPanel2.Controls.Add(votingItems[i]);
+                MessageBox.Show("Не вдалося завантажити список голосувань");
+                return;
+            }
+
+            flowLayoutPanel2.Controls.Clear();
+
+            foreach (var vote in votes)
+            {
+                var item = new TitleVoiting();
+                item.Background = PictrureMatrix(Properties.Resources.Знімок_екрана_2026_02_18_172853, 0.8f);
+                item.title = vote.Title;
+                item.VoteId = vote.Id;
+                item.Voted = $"{vote.TotalVotes} votes";
+
+                flowLayoutPanel2.Controls.Add(item);
             }
         }
 
