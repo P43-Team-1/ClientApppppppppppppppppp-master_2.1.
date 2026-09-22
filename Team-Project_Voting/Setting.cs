@@ -14,5 +14,10 @@ namespace Team_Project_Voting
         {
             InitializeComponent();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 }
