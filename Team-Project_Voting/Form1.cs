@@ -8,21 +8,29 @@ namespace Team_Project_Voting
     {
         private string login;
         private ServerSpeaking server;
-        public Form1()
+        private System.Windows.Forms.Timer refreshTimer;
+        public  Form1()
         {
             InitializeComponent();
             label1.Text = "I am a label";
             server = new ServerSpeaking();
             Shown += Form1_Shown;
+
+            refreshTimer = new System.Windows.Forms.Timer();
+            refreshTimer.Interval = 60000;
+            refreshTimer.Tick += async (s, e) => await VoteItems();
+            refreshTimer.Start();
+
+            FormClosed += (s, e) => refreshTimer.Stop();
         }
-        private void Setting_Click(object sender, EventArgs e)
+        private async void Setting_Click(object sender, EventArgs e)
         {
             using var Settings = new Setting();       
             Settings.ShowDialog();
-            VoteItems();
+            await VoteItems();
         }
 
-        private async void VoteItems()
+        private async Task VoteItems()
         {
             var votes = await server.GetVotes();
 
@@ -51,9 +59,9 @@ namespace Team_Project_Voting
         {
         }
 
-        private void Form1_Shown(object? sender, EventArgs e)
+        private async void Form1_Shown(object? sender, EventArgs e)
         {
-            using var loginForm = new Login();
+            using var loginForm = new Login(server);
 
             if (loginForm.ShowDialog(this) != DialogResult.OK)
             {
@@ -65,7 +73,7 @@ namespace Team_Project_Voting
 
             label2.BeginInvoke(() => { label2.Text = Nick; });
             if(Role == "Admin") { Setting.BeginInvoke(() => { Setting.Visible = true; }); }
-            VoteItems();
+            await VoteItems();
         }
 
         private Image PictrureMatrix(Image image, float alpha)

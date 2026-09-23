@@ -10,10 +10,10 @@ namespace Team_Project_Voting
         ServerSpeaking server;
         public string NickName { get; private set; }
         public string Role { get; private set; }
-        public Login()
+        public Login(ServerSpeaking server)
         {
             InitializeComponent();
-             server = new ServerSpeaking();
+            this.server = server;
         }
 
         private async void button1_Click_1(object sender, EventArgs e)
