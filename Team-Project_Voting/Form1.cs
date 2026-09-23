@@ -19,6 +19,7 @@ namespace Team_Project_Voting
         {
             using var Settings = new Setting();       
             Settings.ShowDialog();
+            VoteItems();
         }
 
         private async void VoteItems()
@@ -40,6 +41,7 @@ namespace Team_Project_Voting
                 item.title = vote.Title;
                 item.VoteId = vote.Id;
                 item.Voted = $"{vote.TotalVotes} votes";
+                item.Server = server;
 
                 flowLayoutPanel2.Controls.Add(item);
             }

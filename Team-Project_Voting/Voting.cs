@@ -11,30 +11,46 @@ namespace Team_Project_Voting
     public partial class Voting : Form
     {
         private Options? _selectedOption;
+        private ServerSpeaking server;
+        private int voteId;
+        private Dictionary<Options, int> optionIds = new();
 
         /// <summary>
         /// The option currently chosen by the user. Use this when saving a vote.
         /// </summary>
         public Options? SelectedOption => _selectedOption;
 
-        public Voting()
+        public Voting(ServerSpeaking server, int voteId)
         {
             InitializeComponent();
             label1.Size = new Size(400, 20);
+            this.server = server;
+            this.voteId = voteId;
         }
 
-        private void Voting_Load(object sender, EventArgs e)
+        private async void Voting_Load(object sender, EventArgs e)
         {
-            label1.Text = "Welcome to the Voting System!\nI think this is a great idea!" +
-    "\nMebombo\n and I'm excited to participate!\n Kommmmmmmmbo";
-            Options[] options = new Options[4];
-            for (int i = 0; i < options.Length; i++)
+            var (title, options) = await server.GetVoteOptions(voteId);
+
+            if (options == null)
             {
-                options[i] = new Options();
-                options[i].optionImage = Properties.Resources.Знімок_екрана_2026_02_18_172853;
-                options[i].optionText = "Option " + (i + 1);
-                options[i].Selected += Option_Selected;
-                flowLayoutPanel1.Controls.Add(options[i]);
+                MessageBox.Show("Не вдалося завантажити варіанти відповіді");
+                this.Close();
+                return;
+            }
+
+            label1.Text = title;
+
+            foreach (var option in options)
+            {
+                var optionControl = new Options();
+                optionControl.optionImage = Properties.Resources.Знімок_екрана_2026_02_18_172853;
+                optionControl.optionText = option.Text; 
+                optionControl.Selected += Option_Selected;
+
+                optionIds[optionControl] = option.Id;
+
+                flowLayoutPanel1.Controls.Add(optionControl);
             }
         }
 

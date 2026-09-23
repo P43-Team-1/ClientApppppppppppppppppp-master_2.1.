@@ -70,19 +70,19 @@ namespace Team_Project_Voting
             else
                 MessageBox.Show($"Register failed: {parts[1]}");
         }
-        public async Task CreateVote(string title, string choices, string endTime)
+        public async Task<bool> CreateVote(string title, string choices, string endTime)
         {
             serverEndPoint = await FindServer();
             if (serverEndPoint == null)
             {
                 MessageBox.Show("Server not found");
-                return;
+                return false;
             }
 
             if (title.Contains(';') || choices.Contains(';'))
             {
                 MessageBox.Show("Текст не може містити символ ';'");
-                return;
+                return false;
             }
 
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -98,10 +98,10 @@ namespace Team_Project_Voting
             string[] parts = response.Split(';');
             socket.Close();
 
-            if (parts[0] == "create_vote_success")
-                MessageBox.Show("Vote created success");
-            else
-                MessageBox.Show($"Vote creation failed: {parts[1]}");
+            if (parts[0] == "create_vote_success") { MessageBox.Show("Vote created success"); return true; }
+
+            else { MessageBox.Show($"Vote creation failed: {parts[1]}"); return false; }
+                
         }
 
         public async Task<List<(int Id, string Title, int TotalVotes)>> GetVotes()
@@ -141,6 +141,41 @@ namespace Team_Project_Voting
 
             return result;
         }
+
+        public async Task<(string Title, List<(int Id, string Text)> Options)> GetVoteOptions(int voteId)
+        {
+            serverEndPoint = await FindServer();
+            if (serverEndPoint == null) { MessageBox.Show("Server not found"); return (null, null); }
+
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            await socket.ConnectAsync(serverEndPoint);
+
+            await socket.SendAsync(Encoding.UTF8.GetBytes($"get_vote_options;{voteId}"));
+
+            byte[] buffer = new byte[4096];
+            int len = await socket.ReceiveAsync(buffer);
+            string response = Encoding.UTF8.GetString(buffer, 0, len);
+            socket.Close();
+
+            string[] parts = response.Split(';');
+            if (parts[0] != "vote_options") { MessageBox.Show("Не вдалося завантажити варіанти"); return (null, null); }
+
+            string title = parts[1];
+            var options = new List<(int, string)>();
+
+            if (parts.Length > 2 && !string.IsNullOrEmpty(parts[2]))
+            {
+                foreach (var entry in parts[2].Split('|'))
+                {
+                    var fields = entry.Split(',', 2);
+                    if (fields.Length == 2 && int.TryParse(fields[0], out int id))
+                        options.Add((id, fields[1]));
+                }
+            }
+
+            return (title, options);
+        }
+
 
         private async Task<IPEndPoint> FindServer()
         {

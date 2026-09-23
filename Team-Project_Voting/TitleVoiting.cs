@@ -21,6 +21,7 @@ namespace Team_Project_Voting
         private string _voted;
         private Image _background;
         private int _voteId;
+        private ServerSpeaking _server;
 
         private void btnVoting_Click(object sender, EventArgs e)
         {
@@ -28,7 +29,7 @@ namespace Team_Project_Voting
 
             mainForm.Hide();
 
-            Voting votingForm = new Voting();
+            Voting votingForm = new Voting(_server, _voteId);
             votingForm.ShowDialog();
 
             mainForm.Show();
@@ -66,6 +67,14 @@ namespace Team_Project_Voting
         {
             get { return _voteId; }
             set { _voteId = value; }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Category("Voting")]
+        public ServerSpeaking Server
+        {
+            get { return _server; }
+            set { _server = value; }
         }
         #endregion
 

@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Team_Project_Voting
 {
@@ -25,9 +26,14 @@ namespace Team_Project_Voting
 
         private async void button3_Click(object sender, EventArgs e)
         {
-            await server.CreateVote(textBox1.Text, GetChoices(), dateTimePicker1.Value.ToString("O"));
-        }
+            bool success = await server.CreateVote(textBox1.Text, GetChoices(), dateTimePicker1.Value.ToString("O"));
 
+            if (success)
+            {
+                this.Close();
+            }
+        }
+        
         private string GetChoices()
         {
             string choices;
