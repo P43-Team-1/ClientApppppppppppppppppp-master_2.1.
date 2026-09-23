@@ -287,6 +287,7 @@ namespace Team_Project_Voting
             await socket.SendAsync(Encoding.UTF8.GetBytes(request));
 
             byte[] buffer = new byte[1024];
+            
             int len = await socket.ReceiveAsync(buffer);
             string response = Encoding.UTF8.GetString(buffer, 0, len);
             socket.Close();

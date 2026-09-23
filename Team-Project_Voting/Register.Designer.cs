@@ -92,7 +92,7 @@
             button1.Name = "button1";
             button1.Size = new Size(135, 38);
             button1.TabIndex = 6;
-            button1.Text = "Регистрація";
+            button1.Text = "Реєстрація";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click_1;
             // 
