@@ -28,24 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            Statistic = new Label();
             flowLayoutPanel1 = new FlowLayoutPanel();
             label1 = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
+            button1 = new Button();
             tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
-            // 
-            // Statistic
-            // 
-            Statistic.AutoSize = true;
-            Statistic.Cursor = Cursors.Hand;
-            Statistic.Dock = DockStyle.Bottom;
-            Statistic.Location = new Point(3, 2);
-            Statistic.Name = "Statistic";
-            Statistic.Size = new Size(207, 20);
-            Statistic.TabIndex = 3;
-            Statistic.Text = "Переглянути статистику";
-            Statistic.SizeChanged += Statistic_SizeChanged;
             // 
             // flowLayoutPanel1
             // 
@@ -69,17 +57,27 @@
             // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Controls.Add(Statistic, 0, 0);
-            tableLayoutPanel1.Location = new Point(0, 467);
+            tableLayoutPanel1.Controls.Add(button1, 0, 0);
+            tableLayoutPanel1.Location = new Point(0, 427);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(427, 22);
+            tableLayoutPanel1.Size = new Size(427, 62);
             tableLayoutPanel1.TabIndex = 4;
+            // 
+            // button1
+            // 
+            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            button1.Location = new Point(297, 29);
+            button1.Name = "button1";
+            button1.Size = new Size(127, 30);
+            button1.TabIndex = 4;
+            button1.Text = "Проголосувати";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // Voting
             // 
@@ -95,15 +93,14 @@
             Text = "Voting";
             Load += Voting_Load;
             tableLayoutPanel1.ResumeLayout(false);
-            tableLayoutPanel1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-        private Label Statistic;
         private FlowLayoutPanel flowLayoutPanel1;
         private Label label1;
         private TableLayoutPanel tableLayoutPanel1;
+        private Button button1;
     }
 }

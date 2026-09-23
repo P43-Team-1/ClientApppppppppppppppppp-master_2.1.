@@ -21,13 +21,16 @@ namespace Team_Project_Voting
         private string _voted;
         private Image _background;
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int UserId { get; set; }
+
         private void btnVoting_Click(object sender, EventArgs e)
         {
             Form mainForm = this.FindForm();
 
             mainForm.Hide();
 
-            Voting votingForm = new Voting();
+            Voting votingForm = new Voting(UserId);
             votingForm.ShowDialog();
 
             mainForm.Show();

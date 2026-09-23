@@ -7,6 +7,7 @@ namespace Team_Project_Voting
     public partial class Form1 : Form
     {
         private string login;
+        private int _userId;
         public Form1()
         {
             InitializeComponent();
@@ -29,6 +30,7 @@ namespace Team_Project_Voting
                 votingItems[i].Background = PictrureMatrix(Properties.Resources.Знімок_екрана_2026_02_18_172853, 0.8f); ;
                 votingItems[i].title = "Voting Item " + (i + 1);
                 votingItems[i].Voted = "0 votes";
+                votingItems[i].UserId = _userId;
                 flowLayoutPanel2.Controls.Add(votingItems[i]);
             }
         }
@@ -48,6 +50,7 @@ namespace Team_Project_Voting
             }
             string Nick = loginForm.NickName;
             string Role = loginForm.Role;
+            _userId = loginForm.UserId;
 
             label2.BeginInvoke(() => { label2.Text = Nick; });
             if(Role == "Admin") { Setting.BeginInvoke(() => { Setting.Visible = true; }); }

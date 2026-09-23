@@ -10,36 +10,62 @@ namespace Team_Project_Voting
 {
     public partial class Voting : Form
     {
+        private readonly int _userId;
+        private readonly ServerSpeaking _server = new ServerSpeaking();
+        private readonly List<Options> _options = new List<Options>();
         private Options? _selectedOption;
+        private bool _hasVoted;
 
         /// <summary>
         /// The option currently chosen by the user. Use this when saving a vote.
         /// </summary>
         public Options? SelectedOption => _selectedOption;
 
-        public Voting()
+        public Voting(int userId)
         {
+            _userId = userId;
             InitializeComponent();
             label1.Size = new Size(400, 20);
         }
 
-        private void Voting_Load(object sender, EventArgs e)
+        private async void Voting_Load(object sender, EventArgs e)
         {
-            label1.Text = "Welcome to the Voting System!\nI think this is a great idea!" +
-    "\nMebombo\n and I'm excited to participate!\n Kommmmmmmmbo";
-            Options[] options = new Options[4];
-            for (int i = 0; i < options.Length; i++)
+            button1.Enabled = false;
+            ServerSpeaking.VoteInfo? vote = await _server.GetActiveVote(_userId);
+            if (vote is null)
             {
-                options[i] = new Options();
-                options[i].optionImage = Properties.Resources.Знімок_екрана_2026_02_18_172853;
-                options[i].optionText = "Option " + (i + 1);
-                options[i].Selected += Option_Selected;
-                flowLayoutPanel1.Controls.Add(options[i]);
+                label1.Text = "Не вдалося завантажити голосування. Перевірте з'єднання із сервером.";
+                return;
             }
+
+            label1.Text = vote.Title;
+            _hasVoted = vote.HasVoted;
+            foreach (ServerSpeaking.VoteOptionInfo voteOption in vote.Options)
+            {
+                var option = new Options
+                {
+                    OptionId = voteOption.Id,
+                    optionImage = Properties.Resources.Знімок_екрана_2026_02_18_172853,
+                    optionText = voteOption.Text,
+                    Percentage = voteOption.Percentage
+                };
+                option.Selected += Option_Selected;
+                option.SetSelected(voteOption.Id == vote.VotedOptionId);
+                option.SetSelectionEnabled(!_hasVoted);
+                _options.Add(option);
+                flowLayoutPanel1.Controls.Add(option);
+            }
+
+            button1.Enabled = !_hasVoted;
+            button1.Text = _hasVoted ? "Ви вже проголосували" : "Проголосувати";
         }
 
         private void Option_Selected(object? sender, EventArgs e)
         {
+            if (_hasVoted)
+            {
+                return;
+            }
             if (sender is not Options selectedOption)
             {
                 return;
@@ -49,8 +75,7 @@ namespace Team_Project_Voting
             _selectedOption = selectedOption;
             _selectedOption.SetSelected(true);
 
-            // A visible confirmation; the chosen object is also available via SelectedOption.
-            Text = $"Voting — selected: {_selectedOption.optionText}";
+            button1.Enabled = true;
         }
 
         private void label1_SizeChanged(object sender, EventArgs e)
@@ -62,11 +87,61 @@ namespace Team_Project_Voting
             flowLayoutPanel1.Top += label1.Bottom;
         }
 
-        private void Statistic_SizeChanged(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
-            int paddingBottom = 10;
+            if (_selectedOption is null)
+            {
+                MessageBox.Show("Спочатку виберіть варіант.");
+                return;
+            }
 
-            this.Height = Statistic.Bottom + Statistic.Height + paddingBottom;
+            button1.Enabled = false;
+            string response = await _server.Vote(_userId, _selectedOption.OptionId);
+            if (response == "vote_success")
+            {
+                _hasVoted = true;
+                foreach (Options option in _options)
+                {
+                    option.SetSelectionEnabled(false);
+                }
+
+                button1.Text = "Ви проголосували";
+                await RefreshResults();
+                return;
+            }
+
+            if (response == "vote_already_cast")
+            {
+                _hasVoted = true;
+                foreach (Options option in _options)
+                {
+                    option.SetSelectionEnabled(false);
+                }
+                button1.Text = "Ви вже проголосували";
+                await RefreshResults();
+                return;
+            }
+
+            button1.Enabled = true;
+            MessageBox.Show("Не вдалося зберегти голос. Спробуйте ще раз.");
+        }
+
+        private async Task RefreshResults()
+        {
+            ServerSpeaking.VoteInfo? vote = await _server.GetActiveVote(_userId);
+            if (vote is null)
+            {
+                return;
+            }
+
+            foreach (Options option in _options)
+            {
+                ServerSpeaking.VoteOptionInfo? serverOption = vote.Options.FirstOrDefault(item => item.Id == option.OptionId);
+                if (serverOption is not null)
+                {
+                    option.Percentage = serverOption.Percentage;
+                }
+            }
         }
     }
 }

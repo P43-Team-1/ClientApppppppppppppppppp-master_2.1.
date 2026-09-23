@@ -12,6 +12,7 @@ namespace Team_Project_Voting
     {
         private readonly Color _defaultBackColor;
         private bool _isSelected;
+        private bool _selectionEnabled = true;
 
         public Options()
         {
@@ -27,6 +28,10 @@ namespace Team_Project_Voting
 
         [Browsable(false)]
         public bool IsSelected => _isSelected;
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int OptionId { get; set; }
 
         private void Options_Load(object sender, EventArgs e)
         {
@@ -50,12 +55,19 @@ namespace Team_Project_Voting
             set { _optionImage = value; PictureO.Image = value; }
         }
 
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public decimal Percentage
+        {
+            set => label1.Text = $"{value:0.#}%";
+        }
+
         /// <summary>
         /// Marks this option as selected and notifies its container.
         /// </summary>
         public void SelectOption()
         {
-            if (_isSelected)
+            if (_isSelected || !_selectionEnabled)
             {
                 return;
             }
@@ -72,6 +84,15 @@ namespace Team_Project_Voting
         {
             _isSelected = selected;
             BackColor = selected ? Color.LightSteelBlue : _defaultBackColor;
+        }
+
+        /// <summary>
+        /// Prevents selecting another option while preserving the displayed result.
+        /// </summary>
+        public void SetSelectionEnabled(bool enabled)
+        {
+            _selectionEnabled = enabled;
+            Cursor = enabled ? Cursors.Hand : Cursors.Default;
         }
 
         private void MakeControlsClickable(Control control)
