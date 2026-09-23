@@ -57,7 +57,7 @@ namespace Team_Project_Voting
             if (parts[0] == "login_success")
             {
                 CurrentLogin = login;
-                return $"{parts[1]};{parts[2]}";
+                return $"{parts[1]};{parts[2]};{parts[3]}";
             }
             else
             {
@@ -206,6 +206,45 @@ namespace Team_Project_Voting
                     var fields = entry.Split(',', 2);
                     if (fields.Length == 2 && int.TryParse(fields[0], out int id))
                         options.Add((id, fields[1]));
+                }
+            }
+
+            return (title, options);
+        }
+
+        public async Task<(string Title, List<(int Id, string Text, int Count, double Percentage)> Options)> GetVoteResults(int voteId)
+        {
+            serverEndPoint = await FindServer();
+            if (serverEndPoint == null) return (null, null);
+
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            await socket.ConnectAsync(serverEndPoint);
+
+            await socket.SendAsync(Encoding.UTF8.GetBytes($"get_vote_results;{voteId}"));
+
+            byte[] buffer = new byte[4096];
+            int len = await socket.ReceiveAsync(buffer);
+            string response = Encoding.UTF8.GetString(buffer, 0, len);
+            socket.Close();
+
+            string[] parts = response.Split(';');
+            if (parts[0] != "vote_results") return (null, null);
+
+            string title = parts[1];
+            var options = new List<(int, string, int, double)>();
+
+            if (parts.Length > 2 && !string.IsNullOrEmpty(parts[2]))
+            {
+                foreach (var entry in parts[2].Split('|'))
+                {
+                    var fields = entry.Split(',');
+                    if (fields.Length == 4 &&
+                        int.TryParse(fields[0], out int id) &&
+                        int.TryParse(fields[2], out int count) &&
+                        double.TryParse(fields[3], System.Globalization.CultureInfo.InvariantCulture, out double pct))
+                    {
+                        options.Add((id, fields[1], count, pct));
+                    }
                 }
             }
 

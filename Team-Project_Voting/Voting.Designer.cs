@@ -31,8 +31,7 @@
             flowLayoutPanel1 = new FlowLayoutPanel();
             label1 = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
-            button1 = new Button();
-            tableLayoutPanel1.SuspendLayout();
+            btnVote = new Button();
             SuspendLayout();
             // 
             // flowLayoutPanel1
@@ -60,7 +59,6 @@
             // 
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Controls.Add(button1, 0, 0);
             tableLayoutPanel1.Location = new Point(0, 427);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
@@ -69,16 +67,16 @@
             tableLayoutPanel1.Size = new Size(427, 62);
             tableLayoutPanel1.TabIndex = 4;
             // 
-            // button1
+            // btnVote
             // 
-            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            button1.Location = new Point(297, 29);
-            button1.Name = "button1";
-            button1.Size = new Size(127, 30);
-            button1.TabIndex = 4;
-            button1.Text = "Проголосувати";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            btnVote.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnVote.Location = new Point(235, 325);
+            btnVote.Name = "btnVote";
+            btnVote.Size = new Size(127, 30);
+            btnVote.TabIndex = 4;
+            btnVote.Text = "Проголосувати";
+            btnVote.UseVisualStyleBackColor = true;
+            btnVote.Click += btnVote_Click;
             // 
             // Voting
             // 
@@ -95,7 +93,6 @@
             Name = "Voting";
             Text = " ";
             Load += Voting_Load;
-            tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
