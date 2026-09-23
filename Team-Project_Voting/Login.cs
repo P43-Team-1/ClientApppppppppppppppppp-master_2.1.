@@ -10,6 +10,7 @@ namespace Team_Project_Voting
         ServerSpeaking server;
         public string NickName { get; private set; }
         public string Role { get; private set; }
+        public int UserId { get; private set; }
         public Login(ServerSpeaking server)
         {
             InitializeComponent();
@@ -25,6 +26,12 @@ namespace Team_Project_Voting
                 string[] parts = result.Split(';');
                 NickName = parts[0];
                 Role = parts[1];
+                if (!int.TryParse(parts[2], out int userId))
+                {
+                    MessageBox.Show("Сервер повернув некоректні дані користувача.");
+                    return;
+                }
+                UserId = userId;
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();

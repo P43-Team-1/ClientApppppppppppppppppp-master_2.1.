@@ -7,6 +7,7 @@ namespace Team_Project_Voting
     public partial class Form1 : Form
     {
         private string login;
+        private int _userId;
         private ServerSpeaking server;
         private System.Windows.Forms.Timer refreshTimer;
         public  Form1()
@@ -70,6 +71,7 @@ namespace Team_Project_Voting
             }
             string Nick = loginForm.NickName;
             string Role = loginForm.Role;
+            _userId = loginForm.UserId;
 
             label2.BeginInvoke(() => { label2.Text = Nick; });
             if(Role == "Admin") { Setting.BeginInvoke(() => { Setting.Visible = true; }); }

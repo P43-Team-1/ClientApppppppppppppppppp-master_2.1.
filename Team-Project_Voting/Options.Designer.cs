@@ -41,6 +41,7 @@
             PictureO = new PictureBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             panel8 = new Panel();
+            label1 = new Label();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
@@ -152,11 +153,11 @@
             // 
             // tableLayoutPanel2
             // 
-            tableLayoutPanel2.ColumnCount = 1;
+            tableLayoutPanel2.ColumnCount = 2;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
             tableLayoutPanel2.Controls.Add(lblOption, 0, 0);
+            tableLayoutPanel2.Controls.Add(label1, 1, 0);
             tableLayoutPanel2.Location = new Point(98, 6);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
@@ -172,12 +173,22 @@
             panel8.Size = new Size(14, 95);
             panel8.TabIndex = 1;
             // 
+            // label1
+            // 
+            label1.Anchor = AnchorStyles.Left;
+            label1.AutoSize = true;
+            label1.Location = new Point(220, 32);
+            label1.Name = "label1";
+            label1.Size = new Size(21, 20);
+            label1.TabIndex = 1;
+            label1.Text = "%";
+            // 
             // Options
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(panel8);
             Controls.Add(tableLayoutPanel2);
+            Controls.Add(panel8);
             Controls.Add(flowLayoutPanel1);
             Controls.Add(panel3);
             Controls.Add(panel2);
@@ -209,5 +220,6 @@
         private Panel panel6;
         private Panel panel7;
         private Panel panel8;
+        private Label label1;
     }
 }

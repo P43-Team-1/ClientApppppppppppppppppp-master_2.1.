@@ -23,6 +23,9 @@ namespace Team_Project_Voting
         private int _voteId;
         private ServerSpeaking _server;
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int UserId { get; set; }
+
         private void btnVoting_Click(object sender, EventArgs e)
         {
             Form mainForm = this.FindForm();
