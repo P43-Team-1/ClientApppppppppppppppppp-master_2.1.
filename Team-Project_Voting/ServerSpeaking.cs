@@ -251,6 +251,30 @@ namespace Team_Project_Voting
             return (title, options);
         }
 
+        public async Task<(bool Voted, int OptionId)> GetVoteStatus(int voteId)
+        {
+            serverEndPoint = await FindServer();
+            if (serverEndPoint == null) return (false, 0);
+
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            await socket.ConnectAsync(serverEndPoint);
+
+            await socket.SendAsync(Encoding.UTF8.GetBytes($"get_vote_status;{voteId};{CurrentLogin}"));
+
+            byte[] buffer = new byte[1024];
+            int len = await socket.ReceiveAsync(buffer);
+            string response = Encoding.UTF8.GetString(buffer, 0, len);
+            socket.Close();
+
+            string[] parts = response.Split(';');
+            if (parts[0] == "vote_status" && parts.Length > 1 && parts[1] == "voted" && int.TryParse(parts[2], out int optionId))
+            {
+                return (true, optionId);
+            }
+
+            return (false, 0);
+        }
+
         public async Task<bool> CastVote(int voteId, int optionId)
         {
             serverEndPoint = await FindServer();

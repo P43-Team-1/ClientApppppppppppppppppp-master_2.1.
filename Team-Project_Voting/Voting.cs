@@ -52,6 +52,29 @@ namespace Team_Project_Voting
 
                 flowLayoutPanel1.Controls.Add(optionControl);
             }
+
+            var (voted, votedOptionId) = await server.GetVoteStatus(voteId);
+
+            if (voted)
+            {
+                _hasVoted = true;
+
+                foreach (var opt in optionIds.Keys)
+                {
+                    opt.SetSelectionEnabled(false);
+
+                    if (opt.OptionId == votedOptionId)
+                    {
+                        opt.SetSelected(true);
+                        _selectedOption = opt;
+                    }
+                }
+
+                btnVote.Enabled = false;
+                btnVote.Text = "Ви проголосували";
+
+                await RefreshResults();
+            }
         }
 
         private void Option_Selected(object? sender, EventArgs e)
@@ -90,7 +113,7 @@ namespace Team_Project_Voting
                 _hasVoted = true;
                 foreach (var opt in optionIds.Keys)
                 {
-                    opt.SetSelectionEnabled(false); // блокуємо подальший вибір
+                    opt.SetSelectionEnabled(false); 
                 }
 
                 btnVote.Text = "Ви проголосували";
