@@ -21,39 +21,38 @@ namespace Team_Project_Voting
         /// </summary>
         public Options? SelectedOption => _selectedOption;
 
-        public Voting(int userId)
+        public Voting(ServerSpeaking server, int voteId)
         {
             _userId = userId;
             InitializeComponent();
             label1.Size = new Size(400, 20);
+            this.server = server;
+            this.voteId = voteId;
         }
 
         private async void Voting_Load(object sender, EventArgs e)
         {
-            button1.Enabled = false;
-            ServerSpeaking.VoteInfo? vote = await _server.GetActiveVote(_userId);
-            if (vote is null)
+            var (title, options) = await server.GetVoteOptions(voteId);
+
+            if (options == null)
             {
-                label1.Text = "Не вдалося завантажити голосування. Перевірте з'єднання із сервером.";
+                MessageBox.Show("Не вдалося завантажити варіанти відповіді");
+                this.Close();
                 return;
             }
 
-            label1.Text = vote.Title;
-            _hasVoted = vote.HasVoted;
-            foreach (ServerSpeaking.VoteOptionInfo voteOption in vote.Options)
+            label1.Text = title;
+
+            foreach (var option in options)
             {
-                var option = new Options
-                {
-                    OptionId = voteOption.Id,
-                    optionImage = Properties.Resources.Знімок_екрана_2026_02_18_172853,
-                    optionText = voteOption.Text,
-                    Percentage = voteOption.Percentage
-                };
-                option.Selected += Option_Selected;
-                option.SetSelected(voteOption.Id == vote.VotedOptionId);
-                option.SetSelectionEnabled(!_hasVoted);
-                _options.Add(option);
-                flowLayoutPanel1.Controls.Add(option);
+                var optionControl = new Options();
+                optionControl.optionImage = Properties.Resources.Знімок_екрана_2026_02_18_172853;
+                optionControl.optionText = option.Text;
+                optionControl.Selected += Option_Selected;
+
+                optionIds[optionControl] = option.Id;
+
+                flowLayoutPanel1.Controls.Add(optionControl);
             }
 
             button1.Enabled = !_hasVoted;
@@ -143,5 +142,23 @@ namespace Team_Project_Voting
                 }
             }
         }
+
+        private async void btnVote_Click(object sender, EventArgs e)
+        {
+            if (_selectedOption == null)
+            {
+                MessageBox.Show("Оберіть варіант відповіді");
+                return;
+            }
+
+            int optionId = optionIds[_selectedOption];
+            bool success = await server.CastVote(voteId, optionId);
+
+            if (success)
+            {
+                this.Close();
+            }
+        }
     }
+    
 }

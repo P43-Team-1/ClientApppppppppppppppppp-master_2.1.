@@ -55,6 +55,7 @@
             button2.TabIndex = 5;
             button2.Text = "Очистити голосування";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // button3
             // 
@@ -64,6 +65,7 @@
             button3.TabIndex = 6;
             button3.Text = "Зберегти голосування";
             button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // textBox1
             // 

@@ -38,18 +38,19 @@
             // flowLayoutPanel1
             // 
             flowLayoutPanel1.AutoScroll = true;
-            flowLayoutPanel1.Location = new Point(16, 32);
+            flowLayoutPanel1.Location = new Point(14, 24);
+            flowLayoutPanel1.Margin = new Padding(3, 2, 3, 2);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(398, 333);
+            flowLayoutPanel1.Size = new Size(348, 250);
             flowLayoutPanel1.TabIndex = 2;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(16, 9);
-            label1.MaximumSize = new Size(300, 0);
+            label1.Location = new Point(14, 7);
+            label1.MaximumSize = new Size(262, 0);
             label1.Name = "label1";
-            label1.Size = new Size(50, 20);
+            label1.Size = new Size(38, 15);
             label1.TabIndex = 1;
             label1.Text = "label1";
             label1.TextAlign = ContentAlignment.TopCenter;
@@ -81,16 +82,18 @@
             // 
             // Voting
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new Size(428, 489);
+            ClientSize = new Size(374, 367);
+            Controls.Add(btnVote);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(label1);
             Controls.Add(flowLayoutPanel1);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "Voting";
-            Text = "Voting";
+            Text = " ";
             Load += Voting_Load;
             tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
@@ -101,6 +104,6 @@
         private FlowLayoutPanel flowLayoutPanel1;
         private Label label1;
         private TableLayoutPanel tableLayoutPanel1;
-        private Button button1;
+        private Button btnVote;
     }
 }
