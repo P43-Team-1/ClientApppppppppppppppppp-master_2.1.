@@ -45,7 +45,7 @@ namespace Team_Project_Voting
             {
                 var optionControl = new Options();
                 optionControl.optionImage = Properties.Resources.Знімок_екрана_2026_02_18_172853;
-                optionControl.optionText = option.Text; 
+                optionControl.optionText = option.Text;
                 optionControl.Selected += Option_Selected;
 
                 optionIds[optionControl] = option.Id;
@@ -84,5 +84,23 @@ namespace Team_Project_Voting
 
             this.Height = Statistic.Bottom + Statistic.Height + paddingBottom;
         }
+
+        private async void btnVote_Click(object sender, EventArgs e)
+        {
+            if (_selectedOption == null)
+            {
+                MessageBox.Show("Оберіть варіант відповіді");
+                return;
+            }
+
+            int optionId = optionIds[_selectedOption];
+            bool success = await server.CastVote(voteId, optionId);
+
+            if (success)
+            {
+                this.Close();
+            }
+        }
     }
+    
 }

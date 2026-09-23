@@ -11,6 +11,8 @@ namespace Team_Project_Voting
         int discover_port = 4568;
         int port = 4567;
         IPEndPoint serverEndPoint;
+
+        public string CurrentLogin { get; private set; }
         public async Task<string> Login(string login, string password)
         {
             serverEndPoint = await FindServer();
@@ -35,6 +37,7 @@ namespace Team_Project_Voting
             socket.Close();
             if (parts[0] == "login_success")
             {
+                CurrentLogin = login;
                 return $"{parts[1]};{parts[2]}";
             }
             else
@@ -174,6 +177,42 @@ namespace Team_Project_Voting
             }
 
             return (title, options);
+        }
+
+        public async Task<bool> CastVote(int voteId, int optionId)
+        {
+            serverEndPoint = await FindServer();
+            if (serverEndPoint == null) { MessageBox.Show("Server not found"); return false; }
+
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            await socket.ConnectAsync(serverEndPoint);
+
+            string request = $"vote;{voteId};{optionId};{CurrentLogin}";
+            await socket.SendAsync(Encoding.UTF8.GetBytes(request));
+
+            byte[] buffer = new byte[1024];
+            int len = await socket.ReceiveAsync(buffer);
+            string response = Encoding.UTF8.GetString(buffer, 0, len);
+            socket.Close();
+
+            if (response == "vote_success")
+            {
+                MessageBox.Show("Голос зараховано!");
+                return true;
+            }
+
+            string[] parts = response.Split(';');
+            string reason = parts.Length > 1 ? parts[1] : "unknown";
+            string msg = reason switch
+            {
+                "already_voted" => "Ви вже голосували в цьому опитуванні",
+                "vote_closed" => "Голосування закрито",
+                "invalid_option" => "Некоректний варіант відповіді",
+                "user_not_found" => "Користувача не знайдено",
+                _ => "Не вдалося проголосувати"
+            };
+            MessageBox.Show(msg);
+            return false;
         }
 
 
